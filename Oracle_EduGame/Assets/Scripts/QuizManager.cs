@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class RoomData { 
     public Sprite[] choiceSprites; // All available images for this room
     public Sprite[] blankSprites;  // The specific "Oracle Bone" images that float above the blanks
+    public int[] correctAnswers;
 }
 
 public class QuizManager : MonoBehaviour
@@ -18,13 +19,14 @@ public class QuizManager : MonoBehaviour
     public GameObject[] choiceButtons; // Drag your 16 choice buttons here
     public GameObject[] blankSlots;    // Drag your 4 blank buttons here
     int currentRoom = 1;
+    int[] playerAnswers = new int[4];
 
     void Start()
-{
+    {
     // This forces the game to set up Room 0 (the 4-button version) 
     // the moment you hit Play.
     SetupRoom(currentRoom);
-}
+    }
 
     public void SelectChoice(GameObject clickedBtn)
     {
@@ -45,32 +47,56 @@ public class QuizManager : MonoBehaviour
 
     public void PlaceInBlank(GameObject blankSlot)
     {
+        string[] nameParts = blankSlot.name.Split('_');
+        int slotID = int.Parse(nameParts[1]);
+
+        // 1. GET THE BUTTON CHILD
+        Transform buttonTransform = blankSlot.transform.Find("Button");
+        Image slotImage = buttonTransform.GetComponent<Image>();
+
+        // 2. DESELECT LOGIC: If player clicks a full slot without holding a new choice
+        if (selectedButton == null && slotImage.sprite != null)
+        {
+            ReturnArtifactToPool(slotID, slotImage);
+            return;
+        }
+
+        // 3. PLACEMENT LOGIC: (Your existing code)
         if (selectedButton != null)
         {
-            // Get the ID from the blank's name (e.g., "Blank_3")
-            string[] nameParts = blankSlot.name.Split('_');
-            int slotID = int.Parse(nameParts[1]);
+            // If the slot is ALREADY full, return the old one first!
+            if (slotImage.sprite != null) {
+                ReturnArtifactToPool(slotID, slotImage);
+            }
 
-            // Place the image
-            Image slotImage = blankSlot.GetComponent<Image>();
+            // Place the new one
             slotImage.sprite = selectedSprite;
             slotImage.color = Color.white; 
 
-            // Feedback
-            SetOpacity(selectedButton, 0.2f);
+            playerAnswers[slotID] = selectedID;
+
+            SetOpacity(selectedButton, 0.5f); // Updated Opacity
             selectedButton.GetComponent<Button>().interactable = false;
 
-            // Check if it's the right spot
-            if (selectedID == slotID) {
-                Debug.Log("Correct placement for artifact " + slotID);
-            } else {
-                Debug.Log("Wrong spot!");
-            }
-
-            // Reset selection
             selectedButton = null;
             selectedID = -1;
         }
+    }
+
+    // New helper function to keep things clean
+    void ReturnArtifactToPool(int slotID, Image slotImage)
+    {
+        int choiceID = playerAnswers[slotID];
+        
+        // Find the original button and reset it
+        GameObject originalBtn = choiceButtons[choiceID];
+        originalBtn.GetComponent<Button>().interactable = true;
+        SetOpacity(originalBtn, 1.0f);
+
+        // Clear the blank slot
+        slotImage.sprite = null;
+        slotImage.color = new Color(1, 1, 1, 0.1f);
+        playerAnswers[slotID] = -1; // Reset answer tracking
     }
 
     void SetOpacity(GameObject obj, float alpha)
@@ -105,35 +131,58 @@ public class QuizManager : MonoBehaviour
         }
 
         // 2. Setup Blanks & Floating Characters
-for (int i = 0; i < blankSlots.Length; i++)
-{
-    if (blankSlots[i] == null) continue; // Safety skip
-
-    if (i < data.blankSprites.Length)
-    {
-        blankSlots[i].SetActive(true);
-        
-        // Safety check for the character image frames
-        if (i < slotCharacterImages.Length && slotCharacterImages[i] != null)
+        for (int i = 0; i < blankSlots.Length; i++)
         {
-            slotCharacterImages[i].gameObject.SetActive(true);
-            slotCharacterImages[i].sprite = data.blankSprites[i];
-            slotCharacterImages[i].color = Color.white;
+            if (blankSlots[i] == null) continue; // Safety skip
+
+            if (i < data.blankSprites.Length)
+            {
+                blankSlots[i].SetActive(true);
+                
+                // Safety check for the character image frames
+                if (i < slotCharacterImages.Length && slotCharacterImages[i] != null)
+                {
+                    slotCharacterImages[i].gameObject.SetActive(true);
+                    slotCharacterImages[i].sprite = data.blankSprites[i];
+                    slotCharacterImages[i].color = Color.white;
+                }
+
+                // Reset Blank Slot
+                Image blankImg = blankSlots[i].GetComponent<Image>();
+                if (blankImg != null) {
+                    blankImg.sprite = null; 
+                    blankImg.color = new Color(1, 1, 1, 0.1f);
+                }
+            }
+            else
+            {
+                blankSlots[i].SetActive(false);
+                if (i < slotCharacterImages.Length && slotCharacterImages[i] != null)
+                    slotCharacterImages[i].gameObject.SetActive(false);
+            }
+        }
+    }
+
+    public void CheckAnswers()
+    {
+        RoomData data = rooms[currentRoom];
+        int correctCount = 0;
+
+        for (int i = 0; i < data.blankSprites.Length; i++)
+        {
+            // Compare what the player put in (playerSelections) 
+            // to what you typed in the Inspector (correctAnswers)
+            if (playerAnswers[i] == data.correctAnswers[i])
+            {
+                correctCount++;
+            }
         }
 
-        // Reset Blank Slot
-        Image blankImg = blankSlots[i].GetComponent<Image>();
-        if (blankImg != null) {
-            blankImg.sprite = null; 
-            blankImg.color = new Color(1, 1, 1, 0.1f);
+        if (correctCount == data.blankSprites.Length) {
+            Debug.Log("SUCCESS: All " + correctCount + " symbols match!");
+            // Trigger your win animation/sound here
+        } else {
+            Debug.Log("FAIL: Only " + correctCount + " are correct.");
         }
-    }
-    else
-    {
-        blankSlots[i].SetActive(false);
-        if (i < slotCharacterImages.Length && slotCharacterImages[i] != null)
-            slotCharacterImages[i].gameObject.SetActive(false);
-    }
-}
     }
 }
