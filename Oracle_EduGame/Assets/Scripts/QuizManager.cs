@@ -30,12 +30,36 @@ public class QuizManager : MonoBehaviour
     public CanvasGroup quizCanvasGroup; // so we can disable it when locked
     public int failedAttempts = 0;
     public GameObject lockOutUI;
-    public float lockoutTime = 20f; // 1 minute
+    public float lockoutTime;
     public bool isLockedOut = false;
+    public float timerEndTime; // records when the timer should end, so that when they close the quiz and the timer ends, it still knows when to unlock
+
 
 
     void Start()
     {
+    }
+
+    void Update()
+    {
+        // If we are currently in a lockout state
+        if (isLockedOut)
+        {
+            // 1. Check if the time has passed
+            if (Time.unscaledTime >= timerEndTime)
+            {
+                EndLockout();
+            }
+            else
+            {
+                // 2. Keep the UI active and show the countdown
+                // This runs every frame the panel is OPEN
+                if (!lockOutUI.activeSelf) lockOutUI.SetActive(true);
+                
+                // If you have a countdown text:
+                // timerText.text = Mathf.Ceil(timerEndTime - Time.unscaledTime) + "s";
+            }
+        }
     }
 
     public void SelectChoice(GameObject clickedBtn)
@@ -225,34 +249,32 @@ public class QuizManager : MonoBehaviour
             failedAttempts++;
             if (failedAttempts >= 3)
             {
-                lockOutUI.SetActive(true);
-                StartCoroutine(LockoutTimer());
+                //lockOutUI.SetActive(true);
+                StartLockout();
             }
         }
     }
 
-    IEnumerator LockoutTimer()
+    public void StartLockout()
     {
         isLockedOut = true;
-        float timer = lockoutTime;
-
-        // Just kill the buttons/interactions
-        quizCanvasGroup.interactable = false; 
+        timerEndTime = Time.unscaledTime + lockoutTime;
+        
+        // We turn on the UI immediately
+        lockOutUI.SetActive(true);
+        quizCanvasGroup.interactable = false;
         quizCanvasGroup.blocksRaycasts = false;
+        
+        Debug.Log("Lockout set to end at: " + timerEndTime);
+    }
 
-        while (timer > 0)
-        {
-            timer -= Time.unscaledDeltaTime;
-            yield return null;
-        }
-
-        // Reset logic
+    void EndLockout()
+    {
         isLockedOut = false;
         failedAttempts = 0;
+        lockOutUI.SetActive(false);
         quizCanvasGroup.interactable = true;
         quizCanvasGroup.blocksRaycasts = true;
-        
-        // Hide the lockout UI immediately if the player happens to be looking at the quiz
-        if (lockOutUI.activeSelf) lockOutUI.SetActive(false);
+        Debug.Log("Lockout cleared by Update clock.");
     }
 }

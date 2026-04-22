@@ -56,35 +56,44 @@ public class DoorInteraction : MonoBehaviour
         }
     }
 
-void ShowQuiz() 
-{
-    // Toggle the panel
-    bool openingNow = !fillInTheBlankPanel.activeSelf;
-    fillInTheBlankPanel.SetActive(openingNow);
+    void ShowQuiz() 
+    {
+        bool openingNow = !fillInTheBlankPanel.activeSelf;
 
-    if (openingNow)
-    {
-        if (quizScript.isLockedOut) 
+        if (openingNow)
         {
-            quizScript.lockOutUI.SetActive(true);
-        }
-        fillInTheBlankPanel.SetActive(true);
-        LockPlayer(true);
-        // Tell the quiz manager to set up the correct room!
-        quizScript.SetupRoom(roomNum); 
-    } 
-    else 
-    {
-        LockPlayer(false);
-        fillInTheBlankPanel.SetActive(false);
-        quizScript.lockOutUI.SetActive(false);
-        // We only check for success if the QuizManager says isFinished is true
-        if (quizScript.isRoomComplete) 
+            // 1. THE SAFETY CHECK: Did the timer finish while we were walking around?
+            if (quizScript.isLockedOut && Time.unscaledTime >= quizScript.timerEndTime)
+            {
+                // If yes, we force the lockout to end before opening the panel
+                quizScript.isLockedOut = false;
+                quizScript.failedAttempts = 0;
+                quizScript.quizCanvasGroup.interactable = true;
+                quizScript.quizCanvasGroup.blocksRaycasts = true;
+            }
+
+            // 2. Open the main panel
+            fillInTheBlankPanel.SetActive(true);
+            
+            // 3. Decide if the RED lockout screen should be visible
+            quizScript.lockOutUI.SetActive(quizScript.isLockedOut);
+
+            LockPlayer(true);
+            quizScript.SetupRoom(roomNum); 
+        } 
+        else 
         {
-            OpenDoor();
+            // Closing logic
+            LockPlayer(false);
+            fillInTheBlankPanel.SetActive(false);
+            quizScript.lockOutUI.SetActive(false); // Hide red screen on exit
+            
+            if (quizScript.isRoomComplete) 
+            {
+                OpenDoor();
+            }
         }
     }
-}
 
     void OpenDoor()
     {

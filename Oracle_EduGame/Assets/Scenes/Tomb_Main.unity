@@ -13708,8 +13708,9 @@ MonoBehaviour:
   quizCanvasGroup: {fileID: 661616734}
   failedAttempts: 0
   lockOutUI: {fileID: 188575763}
-  lockoutTime: 20
+  lockoutTime: 10
   isLockedOut: 0
+  timerEndTime: 0
 --- !u!225 &661616734
 CanvasGroup:
   m_ObjectHideFlags: 0
