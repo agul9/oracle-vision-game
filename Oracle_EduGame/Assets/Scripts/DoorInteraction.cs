@@ -18,7 +18,9 @@ public class DoorInteraction : MonoBehaviour
     private bool isPlayerInRange;
     private bool isDoorOpen = false;
     public GameObject fadePanel;
+    public GameObject endingUI;
     public AudioSource doorOpenSound;
+    private bool waitingForRestart = false;
     void Start()
     {
         
@@ -26,6 +28,12 @@ public class DoorInteraction : MonoBehaviour
 
     void Update()
     {
+        if (waitingForRestart && Input.GetKeyDown(KeyCode.Space))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            return;
+        }
+
         if (isPlayerInRange && Input.GetKeyDown(KeyCode.E) && !isDoorOpen)
         {
             ShowQuiz();
@@ -103,11 +111,19 @@ public class DoorInteraction : MonoBehaviour
         
         if (roomNum == 1)
         {
-            StartCoroutine(FadeAndEnd());
+            ShowEndingUI();
         } else
         {
             ArtifactInteraction.artifactsDecoded = 0; // reset for next room
             ArtifactInteraction.touchedOracleBone = false;
+
+            // Door gets disabled immediately, so OnTriggerExit may never fire.
+            // Explicitly clear prompt/range state to avoid a stuck "Press E".
+            isPlayerInRange = false;
+            if (interactPrompt != null)
+            {
+                interactPrompt.SetActive(false);
+            }
         
             doorObject.SetActive(false);
             doorOpenSound.Play();
@@ -115,6 +131,24 @@ public class DoorInteraction : MonoBehaviour
                 doorLight.SetActive(false);
             }
         }
+    }
+
+    void ShowEndingUI()
+    {
+        waitingForRestart = true;
+
+        if (fadePanel != null)
+        {
+            fadePanel.SetActive(false);
+        }
+
+        if (endingUI != null)
+        {
+            endingUI.SetActive(true);
+        }
+
+        // Keep the player/camera locked while waiting for Space.
+        LockPlayer(true);
     }
 
     public static void LockPlayer(bool lockIt)

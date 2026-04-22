@@ -9,6 +9,8 @@ public class OracleBoneInteraction : MonoBehaviour
     private bool isPlayerInRange;
     public GameObject firstPrompt; // this is just the one that says press E
     public GameObject interactPrompt; // this is i think either the instructions or the quiz
+    public GameObject pressFInteractPrompt; // "Press F" prompt when oracle info is open
+    public GameObject pressFToClosePrompt; // "Press F to close" prompt when overlay is open
     public CanvasGroup muralGroup;
     public float fadeSpeed = 1.5f;
     public Image charUI; // the image of the character/sentence
@@ -48,10 +50,14 @@ public class OracleBoneInteraction : MonoBehaviour
                 muralOverlay.transform.Find("Image").GetComponent<Image>().sprite = sourceMuralImage.sprite;                DoorInteraction.LockPlayer(true);
                 muralOverlay.SetActive(true);
                 DoorInteraction.LockPlayer(true);
+                if (pressFInteractPrompt != null) pressFInteractPrompt.SetActive(false);
+                if (pressFToClosePrompt != null) pressFToClosePrompt.SetActive(true);
             } else
             {
                 muralOverlay.SetActive(false);
                 DoorInteraction.LockPlayer(false);
+                if (pressFToClosePrompt != null) pressFToClosePrompt.SetActive(false);
+                if (pressFInteractPrompt != null) pressFInteractPrompt.SetActive(true);
             }
         }
     }
@@ -79,6 +85,8 @@ public class OracleBoneInteraction : MonoBehaviour
             {
                 isOracleInfoVisible = false;
                 interactPrompt.SetActive(false);
+                if (pressFInteractPrompt != null) pressFInteractPrompt.SetActive(false);
+                if (pressFToClosePrompt != null) pressFToClosePrompt.SetActive(false);
                 charUI.gameObject.SetActive(false);
                 guideBeamParticles.SetActive(false);
                 StopAllCoroutines();
@@ -96,6 +104,8 @@ public class OracleBoneInteraction : MonoBehaviour
         {
             StartCoroutine(FadeMural(muralGroup.alpha, 1));
             interactPrompt.SetActive(true);
+            if (pressFInteractPrompt != null) pressFInteractPrompt.SetActive(true);
+            if (pressFToClosePrompt != null) pressFToClosePrompt.SetActive(false);
             charUI.gameObject.SetActive(true);
             firstPrompt.SetActive(false);
             glowEffect.SetActive(false);
@@ -106,6 +116,8 @@ public class OracleBoneInteraction : MonoBehaviour
         {
             StartCoroutine(FadeMural(muralGroup.alpha, 0));
             interactPrompt.SetActive(false);
+            if (pressFInteractPrompt != null) pressFInteractPrompt.SetActive(false);
+            if (pressFToClosePrompt != null) pressFToClosePrompt.SetActive(false);
             charUI.gameObject.SetActive(false);
             glowEffect.SetActive(false);
             guideBeamParticles.SetActive(false);

@@ -12,6 +12,7 @@ public class ArtifactInteraction : MonoBehaviour
     public CanvasGroup muralGroup;
     public GameObject interactPrompt; // 'press E'
     public GameObject pressFInteractPrompt; // 'press f'
+    public GameObject pressFToClosePrompt; // 'Press F to close' when overlay is open
     public float fadeSpeed = 1.5f;
     private bool isPlayerInRange;
     private bool isMuralVisible = false;
@@ -70,10 +71,13 @@ public class ArtifactInteraction : MonoBehaviour
                 muralOverlay.SetActive(true);
                 DoorInteraction.LockPlayer(true);
                 pressFInteractPrompt.SetActive(false);
+                if (pressFToClosePrompt != null) pressFToClosePrompt.SetActive(true);
             } else
             {
                 muralOverlay.SetActive(false);
                 DoorInteraction.LockPlayer(false);
+                if (pressFToClosePrompt != null) pressFToClosePrompt.SetActive(false);
+                pressFInteractPrompt.SetActive(true);
             }
         }
     }
@@ -114,6 +118,7 @@ public class ArtifactInteraction : MonoBehaviour
             charUI.gameObject.SetActive(false);
             guideBeamParticles.SetActive(false);
             pressFInteractPrompt.SetActive(false);
+            if (pressFToClosePrompt != null) pressFToClosePrompt.SetActive(false);
             
             // hide mural if they walk away
             if (isMuralVisible)
