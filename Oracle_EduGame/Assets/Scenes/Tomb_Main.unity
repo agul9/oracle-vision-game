@@ -6719,17 +6719,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2575411283040177689, guid: 3c2c774992b4e5849acfa2fd4043e9bb, type: 3}
   m_PrefabInstance: {fileID: 172750789}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &172750792 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1255656664940997991, guid: 3c2c774992b4e5849acfa2fd4043e9bb, type: 3}
-  m_PrefabInstance: {fileID: 172750789}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 172750790}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &188575763
 GameObject:
   m_ObjectHideFlags: 0
@@ -46141,7 +46130,7 @@ PrefabInstance:
     - target: {fileID: 3930391364292454764, guid: 3c2c774992b4e5849acfa2fd4043e9bb, type: 3}
       propertyPath: m_TargetGraphic
       value: 
-      objectReference: {fileID: 172750792}
+      objectReference: {fileID: 8879619666230355638}
     - target: {fileID: 3930391364292454764, guid: 3c2c774992b4e5849acfa2fd4043e9bb, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 1
@@ -46169,7 +46158,7 @@ PrefabInstance:
     - target: {fileID: 3930391364292454764, guid: 3c2c774992b4e5849acfa2fd4043e9bb, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
       value: 
-      objectReference: {fileID: 1717281179}
+      objectReference: {fileID: 8879619666230355636}
     - target: {fileID: 3930391364292454764, guid: 3c2c774992b4e5849acfa2fd4043e9bb, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.GameObject, UnityEngine
@@ -46198,6 +46187,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7692170682285792933, guid: 3c2c774992b4e5849acfa2fd4043e9bb, type: 3}
   m_PrefabInstance: {fileID: 8879619666230355634}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8879619666230355638 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1255656664940997991, guid: 3c2c774992b4e5849acfa2fd4043e9bb, type: 3}
+  m_PrefabInstance: {fileID: 8879619666230355634}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8879619666230355636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &8887339600674494916
 GameObject:
   m_ObjectHideFlags: 0
