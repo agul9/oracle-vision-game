@@ -60,6 +60,15 @@ public class ArtifactInteraction : MonoBehaviour
                 isMuralVisible = false;
                 charUI.gameObject.SetActive(false);
                 guideBeamParticles.SetActive(false);
+
+                if (muralIsOverlayed)
+                {
+                    muralIsOverlayed = false;
+                    if (muralOverlay != null) muralOverlay.SetActive(false);
+                    DoorInteraction.LockPlayer(false);
+                    if (pressFToClosePrompt != null) pressFToClosePrompt.SetActive(false);
+                    if (pressFInteractPrompt != null) pressFInteractPrompt.SetActive(false);
+                }
             }
         }
 

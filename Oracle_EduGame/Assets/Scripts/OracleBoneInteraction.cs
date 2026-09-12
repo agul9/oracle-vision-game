@@ -89,6 +89,15 @@ public class OracleBoneInteraction : MonoBehaviour
                 if (pressFToClosePrompt != null) pressFToClosePrompt.SetActive(false);
                 charUI.gameObject.SetActive(false);
                 guideBeamParticles.SetActive(false);
+
+                // Clean up enlarged overlay if still active
+                if (muralIsOverlayed)
+                {
+                    muralIsOverlayed = false;
+                    if (muralOverlay != null) muralOverlay.SetActive(false);
+                    DoorInteraction.LockPlayer(false);
+                }
+
                 StopAllCoroutines();
                 StartCoroutine(FadeMural(muralGroup.alpha, 0));
             }
@@ -122,6 +131,13 @@ public class OracleBoneInteraction : MonoBehaviour
             glowEffect.SetActive(false);
             guideBeamParticles.SetActive(false);
             //playerController.enabled = false;
+
+            if (muralIsOverlayed)
+            {
+                muralIsOverlayed = false;
+                if (muralOverlay != null) muralOverlay.SetActive(false);
+                DoorInteraction.LockPlayer(false);
+            }
         }
     }
 
