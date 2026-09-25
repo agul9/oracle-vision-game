@@ -14111,7 +14111,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!135 &573535735
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -15118,6 +15118,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 43eea7860634cb343940b09f2982e472, type: 3}
     correctAnswers: 02000000
     successPopup: {fileID: 118923434}
+    lockedSlotIndex: -1
   - choiceSprites:
     - {fileID: 21300000, guid: 3c756cb100edfe345a2f921d552095d4, type: 3}
     - {fileID: 21300000, guid: 231e4673e95722e45bddc940cea30bfa, type: 3}
@@ -15135,6 +15136,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: aad1c4ab67742a842b15aacb78580ac4, type: 3}
     correctAnswers: 02000000060000000100000003000000
     successPopup: {fileID: 773710926}
+    lockedSlotIndex: 0
   slotCharacterImages:
   - {fileID: 516334763}
   - {fileID: 1523016065}
@@ -36753,6 +36755,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 115fc052017b2c540a3c0a279cdc507e, type: 3}
       propertyPath: m_Name
       value: vessel 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 115fc052017b2c540a3c0a279cdc507e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

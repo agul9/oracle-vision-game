@@ -9,6 +9,7 @@ public class RoomData {
     public Sprite[] blankSprites;  // The specific "Oracle Bone" images that float above the blanks
     public int[] correctAnswers;
     public GameObject successPopup; // Per-room success popup UI
+    public int lockedSlotIndex = -1; // -1 for first room, 0 for second to lock Fuhao
 }
 
 public class QuizManager : MonoBehaviour
@@ -111,6 +112,8 @@ public class QuizManager : MonoBehaviour
     {
         string[] nameParts = blankSlot.name.Split('_');
         int slotID = int.Parse(nameParts[1]);
+
+        if (slotID == rooms[currentRoom].lockedSlotIndex) return;
 
         // 1. GET THE BUTTON CHILD
         Transform buttonTransform = blankSlot.transform.Find("Button");
@@ -241,11 +244,12 @@ public class QuizManager : MonoBehaviour
                     slotCharacterImages[i].color = Color.white;
                 }
 
-                // Reset Blank Slot
-                Image blankImg = blankSlots[i].GetComponent<Image>();
-                if (blankImg != null) {
-                    blankImg.sprite = null; 
-                    blankImg.color = new Color(1, 1, 1, 0.1f);
+                Transform btnTransform = blankSlots[i].transform.Find("Button");
+                if (btnTransform != null)
+                {
+                    Button btn = btnTransform.GetComponent<Button>();
+                    bool isLocked = (i == data.lockedSlotIndex);
+                    if (btn != null) btn.interactable = !isLocked;
                 }
             }
             else
@@ -261,18 +265,21 @@ public class QuizManager : MonoBehaviour
     {
         RoomData data = rooms[currentRoom];
         int correctCount = 0;
+        int totalToCheck = 0;
 
         for (int i = 0; i < data.blankSprites.Length; i++)
         {
+            if (i == data.lockedSlotIndex) continue;
             // Compare what the player put in (playerSelections) 
             // to what you typed in the Inspector (correctAnswers)
+            totalToCheck++;
             if (playerAnswers[i] == data.correctAnswers[i])
             {
                 correctCount++;
             }
         }
 
-        if (correctCount == data.blankSprites.Length) {
+        if (correctCount == totalToCheck) {
             //Debug.Log("SUCCESS: All " + correctCount + " symbols match!");
             isRoomComplete = true;
             instructionText.text = "SUCCESS: All " + correctCount + " symbols match!";
