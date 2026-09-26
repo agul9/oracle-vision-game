@@ -15130,7 +15130,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 8df4be745ffaecb4d8e3ce55582e73f7, type: 3}
     - {fileID: 21300000, guid: 93f7bd131603e1b4e9f2c1b3b495e6b2, type: 3}
     blankSprites:
-    - {fileID: 21300000, guid: b5a7cdf2eb618e0468144d0820f4233e, type: 3}
+    - {fileID: 21300000, guid: baf431e89dc3d02429e8db809f46f819, type: 3}
     - {fileID: 21300000, guid: 43eea7860634cb343940b09f2982e472, type: 3}
     - {fileID: 21300000, guid: e892f9c025bb4dd479d904d4e62af2cb, type: 3}
     - {fileID: 21300000, guid: aad1c4ab67742a842b15aacb78580ac4, type: 3}
@@ -15160,6 +15160,7 @@ MonoBehaviour:
   isRoomComplete: 0
   instructionText: {fileID: 2451500}
   cursor: {fileID: 1294056224}
+  lockedSlotSprite: {fileID: 21300000, guid: 5195fa5d100037b48b02a7c019eb7e21, type: 3}
   quizCanvasGroup: {fileID: 661616734}
   failedAttempts: 0
   lockOutUI: {fileID: 188575763}

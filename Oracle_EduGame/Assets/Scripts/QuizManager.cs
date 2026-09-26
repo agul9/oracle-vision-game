@@ -27,6 +27,7 @@ public class QuizManager : MonoBehaviour
     public bool isRoomComplete = false;
     public TMP_Text instructionText;
     public Image cursor;
+    public Sprite lockedSlotSprite;
 
     // lock quiz variables
     public CanvasGroup quizCanvasGroup; // so we can disable it when locked
@@ -183,6 +184,7 @@ public class QuizManager : MonoBehaviour
         currentRoom = roomIndex;
         RoomData data = rooms[roomIndex];
         isRoomComplete = false;
+        failedAttempts = 0;
         instructionText.text = "Select a translation, then click the blank to place it";
 
         // Hide all success popups when entering/resetting a room.
@@ -248,8 +250,25 @@ public class QuizManager : MonoBehaviour
                 if (btnTransform != null)
                 {
                     Button btn = btnTransform.GetComponent<Button>();
+                    Image btnImg = btnTransform.GetComponent<Image>(); // <-- this is the real "fill" image
                     bool isLocked = (i == data.lockedSlotIndex);
+
                     if (btn != null) btn.interactable = !isLocked;
+
+                    if (btnImg != null)
+                    {
+                        if (isLocked && lockedSlotSprite != null)
+                        {
+                            btnImg.sprite = lockedSlotSprite;
+                            btnImg.color = Color.white;
+                        }
+                        else
+                        {
+                            btnImg.sprite = null;
+                            btnImg.color = new Color(1, 1, 1, 0.1f);
+                        }
+                    }
+
                 }
             }
             else
