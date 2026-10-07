@@ -14257,6 +14257,8 @@ MonoBehaviour:
   quizPreviewImage: {fileID: 21300000, guid: 1417d41e4847f4845a2fe3eacafab23d, type: 3}
   fadePanel: {fileID: 257873793}
   endingUI: {fileID: 704160932}
+  endingVideoObject: {fileID: 1292136815}
+  endingVideoPlayer: {fileID: 1805798971}
   doorOpenSound: {fileID: 668606382}
 --- !u!65 &582893531
 BoxCollider:
@@ -43709,6 +43711,8 @@ MonoBehaviour:
   quizPreviewImage: {fileID: 21300000, guid: 1417d41e4847f4845a2fe3eacafab23d, type: 3}
   fadePanel: {fileID: 0}
   endingUI: {fileID: 0}
+  endingVideoObject: {fileID: 0}
+  endingVideoPlayer: {fileID: 0}
   doorOpenSound: {fileID: 610989092}
 --- !u!1 &1907145726
 GameObject:
