@@ -28,6 +28,7 @@ public class DoorInteraction : MonoBehaviour
     private bool waitingForRestart = false;
     void Start()
     {
+        // load ending video and hide it
         if (endingVideoPlayer != null)
         {
             endingVideoPlayer.playOnAwake = false;
@@ -41,6 +42,8 @@ public class DoorInteraction : MonoBehaviour
             endingVideoObject.SetActive(false);
         }
     }
+
+    //play it but then pause it right after
     void OnEndingVideoPrepared(VideoPlayer vp)
     {
         vp.Play();
@@ -170,12 +173,11 @@ public class DoorInteraction : MonoBehaviour
 
     IEnumerator FadeAndEnd()
     {
-        // 1. Prepare the Fade Panel - TODO: change this to fade into the video
+        // fade effect
         fadePanel.SetActive(true);
         Image panelImage = fadePanel.GetComponent<Image>();
         float alpha = 0;
 
-        // 2. Fade to Black (The dramatic transition)
         while (alpha < 1)
         {
             // Use unscaledDeltaTime in case you have time paused
@@ -184,7 +186,7 @@ public class DoorInteraction : MonoBehaviour
             yield return null;
         }
 
-        // 2. NEW — show + play the ending video instead of the acknowledgement screen
+        // show + play the ending video
         if (endingVideoPlayer != null && endingVideoObject != null)
         {
             endingVideoObject.SetActive(true);
@@ -204,8 +206,7 @@ public class DoorInteraction : MonoBehaviour
             }
             fadePanel.SetActive(false);
 
-            // NOTE: we stop here — OnEndingVideoFinished() (below) handles what happens
-            // once the video completes, since loopPointReached fires async, not in this coroutine
+            // OnEndingVideoFinished() handles rest
             yield break;
         }
 
