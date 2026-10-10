@@ -1,38 +1,64 @@
 using UnityEngine;
 using UnityEngine.Video;
 using System.Collections;
+using UnityEngine.UI;
 
 public class GameStartManager : MonoBehaviour
 {
     public CanvasGroup introPanel;
-    public CanvasGroup instructionPanel;
+    //public CanvasGroup instructionPanel;
     public GameObject staticBackground;
     public CanvasGroup introVideo; // control for the hide/show of ui
-    public VideoPlayer videoPlayer; // controls the video controls like play
+    public VideoPlayer introVideoPlayer; // controls the video controls like play
 
-    private int screenState = 0;
+    public CanvasGroup creditsVideo;
+    public VideoPlayer creditsVideoPlayer;
+
+    // start screen buttons
+    public Button newGameBtn;
+    public Button creditsBtn;
+    public Button exitBtn;
+
+    private bool isTransitioning = false;
     public float fadeSpeed = 1.0f;
     public GameObject playerController;
 
     void Start()
     {
+
+        newGameBtn.onClick.AddListener(NewGameClicked);
+        creditsBtn.onClick.AddListener(CreditsBtnClicked);
+        exitBtn.onClick.AddListener(ExitBtnClicked);
+
         introPanel.alpha = 1;
-        instructionPanel.alpha = 0;
-        instructionPanel.gameObject.SetActive(false);
+        // instructionPanel.alpha = 0;
+        // instructionPanel.gameObject.SetActive(false);
 
         introVideo.alpha = 0;
         introVideo.interactable = false;
-        introVideo.blocksRaycasts = false; 
+        introVideo.blocksRaycasts = false;
+
+        creditsVideo.alpha = 0;
+        creditsVideo.interactable = false;
+        creditsVideo.blocksRaycasts = false;
 
         Time.timeScale = 0; // pause game
         Cursor.lockState = CursorLockMode.None; // shows the mouse
 
-        if (videoPlayer != null)
+        if (introVideoPlayer != null)
         {
-            videoPlayer.playOnAwake = false;
-            videoPlayer.loopPointReached += OnVideoFinished; // advance when video ends
-            videoPlayer.Prepare();
-            videoPlayer.prepareCompleted += OnVideoPrepared;
+            introVideoPlayer.playOnAwake = false;
+            introVideoPlayer.loopPointReached += OnVideoFinished; // advance when video ends
+            introVideoPlayer.Prepare();
+            introVideoPlayer.prepareCompleted += OnVideoPrepared;
+        }
+
+        if (creditsVideoPlayer != null)
+        {
+            creditsVideoPlayer.playOnAwake = false;
+            creditsVideoPlayer.loopPointReached += OnCreditsVideoFinished; // advance when video ends
+            creditsVideoPlayer.Prepare();
+            creditsVideoPlayer.prepareCompleted += OnVideoPrepared;
         }
     }
 
@@ -42,42 +68,52 @@ public class GameStartManager : MonoBehaviour
         vp.Pause();
     }
     // Update is called once per frame
-    void Update()
+    public void NewGameClicked ()
     {
-        if (screenState == 0 && Input.GetKeyDown(KeyCode.Space))
+        if (!isTransitioning)
         {
-            StartCoroutine(FadeOutAndIn(introPanel, introVideo));
-            screenState++;
+            StartCoroutine(NewGameSequence());
         }
     }
-    IEnumerator FadeOutAndIn(CanvasGroup outGroup, CanvasGroup inGroup)
+
+    public void CreditsBtnClicked ()
     {
-        while (outGroup.alpha > 0)
+        if (!isTransitioning)
         {
-            outGroup.alpha -= Time.unscaledDeltaTime * fadeSpeed;
-            yield return null;
+            StartCoroutine(CreditsSequence());
         }
-        outGroup.gameObject.SetActive(false);
+    }
 
-        while (inGroup.alpha < 1)
+    public void ExitBtnClicked ()
+    {
+        Application.Quit();
+    }
+
+    void Update()
+    {
+       if (!isTransitioning && Input.GetKeyDown(KeyCode.Space))
         {
-            inGroup.alpha += Time.unscaledDeltaTime * fadeSpeed;
-            yield return null;
+            StartCoroutine(NewGameSequence());
         }
+    }
 
-        if (videoPlayer != null)
+    IEnumerator FadeTo(CanvasGroup group, float targetAlpha)
+    {
+        while (!Mathf.Approximately(group.alpha, targetAlpha))
         {
-            if (!videoPlayer.isPrepared)
-            {
-                yield return new WaitUntil(() => videoPlayer.isPrepared);
-            }
-            videoPlayer.Play();
+            group.alpha = Mathf.MoveTowards(group.alpha, targetAlpha, Time.unscaledDeltaTime * fadeSpeed);
+            yield return null;
         }
     }
 
     void OnVideoFinished(VideoPlayer vp)
     {
         StartCoroutine(FinalFadeOut(introVideo));
+    }
+
+    void OnCreditsVideoFinished (VideoPlayer vp)
+    {
+        StartCoroutine(ReturnToMenuSequence());
     }
 
     IEnumerator FinalFadeOut(CanvasGroup group)
@@ -97,5 +133,45 @@ public class GameStartManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         group.gameObject.SetActive(false);
         this.enabled = false;
+    }
+
+    IEnumerator PlayWhenReady(VideoPlayer player)
+    {
+        if (!player.isPrepared)
+        {
+            yield return new WaitUntil(() => player.isPrepared);
+        }
+        player.Play();
+    }
+
+    IEnumerator NewGameSequence()
+    {
+        isTransitioning = true;
+        yield return FadeTo(introPanel, 0);
+        introPanel.gameObject.SetActive(false);
+        yield return FadeTo(introVideo, 1);
+        yield return PlayWhenReady(introVideoPlayer);
+        // OnVideoFinished takes over from here
+    }
+
+    IEnumerator CreditsSequence()
+    {
+        isTransitioning = true;
+        yield return FadeTo(introPanel, 0);
+        introPanel.gameObject.SetActive(false);
+        yield return FadeTo(creditsVideo, 1);
+        yield return PlayWhenReady(creditsVideoPlayer);
+    }   
+
+    IEnumerator ReturnToMenuSequence()
+    {
+        yield return FadeTo(creditsVideo, 0);
+
+        creditsVideoPlayer.Stop();     // reset so it can play again
+        creditsVideoPlayer.Prepare();  // warm it up again (your OnVideoPrepared handles the rest)
+
+        introPanel.gameObject.SetActive(true);  // turn the menu back on BEFORE fading it in
+        yield return FadeTo(introPanel, 1);
+        isTransitioning = false;                // menu is fully back, buttons are allowed again
     }
 }

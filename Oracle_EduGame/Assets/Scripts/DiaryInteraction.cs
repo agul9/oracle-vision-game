@@ -14,12 +14,6 @@ public class DiaryInteraction : MonoBehaviour
     public bool diaryOpen;
     private bool isPlayerInRange;
 
-    void Start()
-    {
-        rightBtn.onClick.AddListener(RightBtnClicked);
-        leftBtn.onClick.AddListener(LeftBtnClicked);
-        closeBtn.onClick.AddListener(CloseBtnClicked);
-    }
     void Update()
     {
         if (isPlayerInRange && Input.GetKeyDown(KeyCode.E))
