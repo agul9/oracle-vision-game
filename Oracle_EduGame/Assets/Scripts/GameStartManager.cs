@@ -11,6 +11,8 @@ public class GameStartManager : MonoBehaviour
     public CanvasGroup introVideo; // control for the hide/show of ui
     public VideoPlayer introVideoPlayer; // controls the video controls like play
 
+    public AudioSource bgMusic;
+
     public CanvasGroup creditsVideo;
     public VideoPlayer creditsVideoPlayer;
 
@@ -129,6 +131,7 @@ public class GameStartManager : MonoBehaviour
             staticBackground.SetActive(false);
         }
         
+        bgMusic.UnPause();
         Time.timeScale = 1;
         Cursor.lockState = CursorLockMode.Locked;
         group.gameObject.SetActive(false);
@@ -142,6 +145,7 @@ public class GameStartManager : MonoBehaviour
             yield return new WaitUntil(() => player.isPrepared);
         }
         player.Play();
+        bgMusic.Pause();
     }
 
     IEnumerator NewGameSequence()
@@ -166,6 +170,8 @@ public class GameStartManager : MonoBehaviour
     IEnumerator ReturnToMenuSequence()
     {
         yield return FadeTo(creditsVideo, 0);
+
+        bgMusic.UnPause();
 
         creditsVideoPlayer.Stop();     // reset so it can play again
         creditsVideoPlayer.Prepare();  // warm it up again (your OnVideoPrepared handles the rest)

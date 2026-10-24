@@ -25,6 +25,8 @@ public class DoorInteraction : MonoBehaviour
     public VideoPlayer endingVideoPlayer; // video obj
     
     public AudioSource doorOpenSound;
+    public AudioSource bgMusic;
+
     private bool waitingForRestart = false;
     void Start()
     {
@@ -174,6 +176,7 @@ public class DoorInteraction : MonoBehaviour
     IEnumerator FadeAndEnd()
     {
         // fade effect
+        interactPrompt.SetActive(false);
         fadePanel.SetActive(true);
         Image panelImage = fadePanel.GetComponent<Image>();
         float alpha = 0;
@@ -189,6 +192,7 @@ public class DoorInteraction : MonoBehaviour
         // show + play the ending video
         if (endingVideoPlayer != null && endingVideoObject != null)
         {
+            bgMusic.Pause();
             endingVideoObject.SetActive(true);
 
             if (!endingVideoPlayer.isPrepared)
@@ -238,6 +242,7 @@ public class DoorInteraction : MonoBehaviour
     {
         // quick fade back to black before swapping to the acknowledgement screen,
         // so it's not a jarring hard-cut from video to UI
+        bgMusic.UnPause();
         fadePanel.SetActive(true);
         Image panelImage = fadePanel.GetComponent<Image>();
         float alpha = 0;
